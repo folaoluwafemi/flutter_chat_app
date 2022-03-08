@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/screens/groups_screen.dart';
 import 'package:chat_app_flutter/utils/custom_widgets.dart';
 import 'package:chat_app_flutter/screens/chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -73,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             await _auth.signInWithEmailAndPassword(
                                 email: email, password: password);
                         if (_userCredentials != null) {
-                          Navigator.of(context).pushNamed(ChatScreen.id);
+                          Navigator.of(context).pushNamed(GroupScreen.id);
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(

@@ -119,8 +119,6 @@ class MessageBox extends StatelessWidget {
     var minuteTime = newTime.inMinutes;
     var hourTime = newTime.inHours;
 
-
-
     return hourTime.toString() + ':' + minuteTime.toString();
   }
 
@@ -170,11 +168,43 @@ class MessageBox extends StatelessWidget {
           Chip(
             label: Text(
               timeFormatter(),
-
               style: messageStyle(),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class GroupTile extends StatelessWidget {
+  final String groupName;
+  final VoidCallback ontapped;
+
+  const GroupTile({required this.groupName, required this.ontapped, Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.black54,
+        ),
+        borderRadius: const BorderRadius.all(Radius.circular(5)),
+      ),
+      margin: const EdgeInsets.only(top: 5, left: 5, right: 5),
+      child: InkWell(
+        onTap: ontapped,
+        child: ListTile(
+          tileColor: Colors.orange.withOpacity(0.5),
+          leading: CircleAvatar(
+            child: Image.asset('images/chat_logo.png'),
+          ),
+          title: Text(
+            groupName,
+          ),
+        ),
       ),
     );
   }
