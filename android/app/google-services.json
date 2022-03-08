@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1035304319197",
+    "project_id": "chat-app-23a02",
+    "storage_bucket": "chat-app-23a02.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1035304319197:android:b68895adfb8f6ea2338334",
+        "android_client_info": {
+          "package_name": "com.popestrings.chat_app_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1035304319197-u71ka4lnu3k87dedsqa7e0odfi3ibi49.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvT96xjepByxuLH0R_SEcrZ1iGcBP3Qv0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1035304319197-u71ka4lnu3k87dedsqa7e0odfi3ibi49.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
