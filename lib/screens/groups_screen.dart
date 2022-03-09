@@ -2,6 +2,7 @@ import 'package:chat_app_flutter/models/models.dart';
 import 'package:chat_app_flutter/screens/chat_screen.dart';
 import 'package:chat_app_flutter/utils/custom_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class GroupScreen extends StatefulWidget {
@@ -14,6 +15,7 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
+  final User? _user = FirebaseAuth.instance.currentUser;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
@@ -44,22 +46,26 @@ class _GroupScreenState extends State<GroupScreen> {
                       );
                     }
 
+                    var collection = snapshot.data;
                     List<DocumentSnapshot<Map<String, dynamic>>> documentList =
-                        snapshot.data?.docs
+                        collection?.docs
                             as List<DocumentSnapshot<Map<String, dynamic>>>;
 
-                    var documentEntry = GroupModel.fromJson(
-                        documentList[0].data() as Map<String, dynamic>);
-
                     return ListView.builder(
-                      itemCount: 1,
+                      itemCount: documentList.length,
                       itemBuilder: (context, index) {
-                        var group = documentEntry;
-                        print(group.name);
+                        var document = documentList[index].data();
+                        var group = GroupModel.fromJson(
+                            document as Map<String, dynamic>);
+
                         return GroupTile(
                           groupName: group.name,
-                          ontapped: () {
-                            Navigator.of(context).pushNamed(ChatScreen.id);
+                          onTapped: () {
+                            Navigator.of(context).pushNamed(
+                              ChatScreen.id,
+                              arguments:
+                                  GroupChatArgument(chatName: group.name),
+                            );
                           },
                         );
                       },
@@ -69,8 +75,43 @@ class _GroupScreenState extends State<GroupScreen> {
               ),
             ],
           ),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              showModalBottomSheet(
+                  context: context,
+                  builder: (context) {
+                    return AddGroupBottomSheet(
+                      createGroupCallback: (groupName) =>
+                          addNewGroup(groupName),
+                    );
+                  });
+            },
+            child: const Icon(Icons.add),
+          ),
         ),
       ),
     );
+  }
+
+  void addNewGroup(String name) async {
+    var newMessage = MessageModel(
+      senderEmail: _user!.email!,
+      messageText: 'Welcome to this new group chat',
+      timeStamp: DateTime.now(),
+    );
+
+    var newGroup = GroupModel(
+      name: name,
+    );
+
+    var messageModelMap = MessageModel.toJson(newMessage);
+
+    Map<String, dynamic> groups = {
+      'groups': GroupModel.toJson(newGroup),
+    };
+    await _firestore.collection('chats').add(groups);
+    await _firestore.collection(name).add(
+          messageModelMap,
+        );
   }
 }

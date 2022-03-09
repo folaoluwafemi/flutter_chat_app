@@ -48,54 +48,57 @@ Map<String, dynamic> _messageModelToJson(MessageModel message) {
 
   map['email'] = message.senderEmail;
   map['messageText'] = message.messageText;
-  map['timeStamp'] = message.timeStamp.toString();
+  map['timeStamp'] = Timestamp.fromDate(message.timeStamp);
 
   return map;
 }
 
 class GroupModel {
   final String name;
-  final List<MessageModel> messages;
 
   GroupModel({
     required this.name,
-    required this.messages,
   });
+
 
   factory GroupModel.fromSnapshot(
           DocumentSnapshot<Map<String, dynamic>> snapshot) =>
       GroupModel.fromJson(snapshot.data() as Map<String, dynamic>);
 
+
+
   factory GroupModel.fromJson(Map<String, dynamic> group) =>
       _groupFromJson(group);
 
-  Map<String, dynamic> toJson(GroupModel group) => _groupToJson(group);
+
+
+  static Map<String, dynamic> toJson(GroupModel group) => _groupToJson(group);
 }
 
+
+
+
+//converts firebase storable file into group
 GroupModel _groupFromJson(Map<String, dynamic> groups) {
   var group = groups['groups'];
   var name = group['name'].toString();
-  List<MessageModel> messages = [];
 
-  List<dynamic> firebaseMessage = group['messages'];
-
-  for (var element in firebaseMessage) {
-    messages.add(MessageModel.fromJson(Map.from(element)));
-  }
-
-  return GroupModel(name: name, messages: messages);
+  return GroupModel(name: name);
 }
 
+
+
+//converts group to firebase storable file
 Map<String, dynamic> _groupToJson(GroupModel group) {
-  String name = group.name;
-
-  List<Map<String, dynamic>> messages = [];
-
-  for (var message in group.messages) {
-    messages.add(MessageModel.toJson(message));
-  }
   return <String, dynamic>{
-    'name': name,
-    'messages': messages,
+    'name': group.name,
   };
+}
+
+
+
+class GroupChatArgument {
+  final String chatName;
+
+  GroupChatArgument({required this.chatName});
 }

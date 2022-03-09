@@ -1,9 +1,6 @@
 import 'package:chat_app_flutter/models/models.dart';
 import 'package:chat_app_flutter/utils/utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 class RoundEdgeButton extends StatelessWidget {
   final VoidCallback? buttonOnPressed;
@@ -114,7 +111,6 @@ class MessageBox extends StatelessWidget {
   String timeFormatter() {
     var rawTime = message.timeStamp;
     var now = DateTime.now();
-    var timeFormat = DateFormat('HH:mm');
     var newTime = now.difference(rawTime);
     var minuteTime = newTime.inMinutes;
     var hourTime = newTime.inHours;
@@ -179,9 +175,9 @@ class MessageBox extends StatelessWidget {
 
 class GroupTile extends StatelessWidget {
   final String groupName;
-  final VoidCallback ontapped;
+  final VoidCallback onTapped;
 
-  const GroupTile({required this.groupName, required this.ontapped, Key? key})
+  const GroupTile({required this.groupName, required this.onTapped, Key? key})
       : super(key: key);
 
   @override
@@ -195,7 +191,7 @@ class GroupTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.only(top: 5, left: 5, right: 5),
       child: InkWell(
-        onTap: ontapped,
+        onTap: onTapped,
         child: ListTile(
           tileColor: Colors.orange.withOpacity(0.5),
           leading: CircleAvatar(
@@ -206,6 +202,75 @@ class GroupTile extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+class AddGroupTextField extends StatelessWidget {
+  final ValueChanged valueChanged;
+  final String? hintText;
+
+  const AddGroupTextField(
+      {required this.valueChanged, required this.hintText, Key? key})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      child: TextField(
+        onChanged: valueChanged,
+        decoration: InputDecoration(
+          hintText: hintText,
+          border: InputBorder.none,
+        ),
+      ),
+    );
+  }
+}
+
+class AddGroupBottomSheet extends StatefulWidget {
+  final Function(String name) createGroupCallback;
+
+  const AddGroupBottomSheet({required this.createGroupCallback,  Key? key})
+      : super(key: key);
+
+  @override
+  State<AddGroupBottomSheet> createState() => _AddGroupBottomSheetState();
+}
+
+class _AddGroupBottomSheetState extends State<AddGroupBottomSheet> {
+  String groupName = '';
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomSheet(
+      onClosing: () {},
+      builder: (context) {
+        return Container(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            children: [
+              AddGroupTextField(
+                valueChanged: (value) {
+                  groupName = value;
+                },
+                hintText: 'Group Name...',
+              ),
+              const SizedBox(
+                height: 19,
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  widget.createGroupCallback(groupName);
+                  Navigator.of(context).pop();
+                },
+                child: const Text('Create Group'),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

@@ -1,5 +1,5 @@
-import 'package:chat_app_flutter/utils/custom_widgets.dart';
 import 'package:chat_app_flutter/models/models.dart';
+import 'package:chat_app_flutter/utils/custom_widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -7,8 +7,9 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class ChatScreen extends StatefulWidget {
   static const String id = '/chat';
+  final GroupChatArgument args;
 
-  const ChatScreen({Key? key}) : super(key: key);
+  const ChatScreen({required this.args, Key? key}) : super(key: key);
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -31,6 +32,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    String chatName = widget.args.chatName;
+
     return LayoutBuilder(
       builder: (context, constraints) => SafeArea(
         child: Scaffold(
@@ -55,6 +58,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   });
                   await _auth.signOut();
                   Navigator.of(context).pop();
+                  Navigator.of(context).pop();
                 },
                 icon: const Icon(Icons.clear),
               ),
@@ -69,8 +73,21 @@ class _ChatScreenState extends State<ChatScreen> {
                   : constraints.maxHeight - 80,
               child: Stack(
                 children: [
+                  // ListView.builder(
+                  //     itemCount: group.messages.length,
+                  //     itemBuilder: (context, inx) {
+                  //       var message = group.messages[inx];
+                  //       return MessageBox(
+                  //         message: message,
+                  //         isCurrentUser: message.senderEmail == _user!.email!,
+                  //       );
+                  //     }),
+
                   StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: _firestore.collection('messages').orderBy('timeStamp').snapshots(),
+                    stream: _firestore
+                        .collection(chatName)
+                        .orderBy('timeStamp')
+                        .snapshots(),
                     builder: (context,
                         AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
                             snapshot) {
@@ -131,11 +148,25 @@ class _ChatScreenState extends State<ChatScreen> {
                               setState(() {
                                 isPIon = true;
                               });
-                              await _firestore.collection('messages').add({
-                                'email': _user!.email!,
-                                'messageText': message,
-                                'timeStamp': DateTime.now(),
-                              });
+
+                              var newMessage = MessageModel(
+                                  senderEmail: _user!.email!,
+                                  messageText: message,
+                                  timeStamp: DateTime.now());
+
+                              // await _firestore
+                              //     .collection('chats')
+                              //     .doc(chatDocumentId)
+                              //     .update({
+                              //   'groups.messages.${index + 1}': MessageModel.toJson(newMessage),
+                              // })
+                              // .then((value) => print("user has been updated sucessfully \n\n\n\n sucessfully"))
+                              // .catchError((error)=> print('user has NOT been updated due to: $error'));
+
+                              await _firestore.collection(chatName).add(
+                                    MessageModel.toJson(newMessage),
+                                  );
+
                               print(message);
                               setState(() {
                                 isPIon = false;

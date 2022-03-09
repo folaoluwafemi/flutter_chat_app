@@ -1,3 +1,4 @@
+import 'package:chat_app_flutter/models/models.dart';
 import 'package:chat_app_flutter/screens/chat_screen.dart';
 import 'package:chat_app_flutter/screens/groups_screen.dart';
 import 'package:chat_app_flutter/screens/login_screen.dart';
@@ -43,7 +44,7 @@ class FlashChatApp extends StatelessWidget {
         if (settings.name == WelcomeScreen.id) {
           return MaterialPageRoute(builder: (context) => const WelcomeScreen());
         }
-        if(settings.name == GroupScreen.id){
+        if (settings.name == GroupScreen.id) {
           return MaterialPageRoute(builder: (context) => const GroupScreen());
         }
         if (settings.name == LoginScreen.id) {
@@ -54,7 +55,13 @@ class FlashChatApp extends StatelessWidget {
               builder: (context) => const RegistrationScreen());
         }
         if (settings.name == ChatScreen.id) {
-          return MaterialPageRoute(builder: (context) => const ChatScreen());
+          GroupChatArgument newArgs = settings.arguments as GroupChatArgument;
+
+          return MaterialPageRoute(
+            builder: (context) => ChatScreen(
+              args: newArgs,
+            ),
+          );
         } else {
           return MaterialPageRoute(
             builder: (context) => const Scaffold(
