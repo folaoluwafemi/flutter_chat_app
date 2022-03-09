@@ -207,8 +207,6 @@ class RegistrationForm extends StatelessWidget {
 
                 if (userCredentials != null) {
                   progressIndicator(false);
-                  print(
-                      'user has been created and this should navigate to the next screen');
                   navigate();
                 }
               } else {

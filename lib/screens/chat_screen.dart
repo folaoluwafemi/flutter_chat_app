@@ -86,8 +86,15 @@ class _ChatScreenState extends State<ChatScreen> {
                       if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
                       }
-                      List<DocumentSnapshot> newSnapshotList =
+
+
+
+                      List<DocumentSnapshot> newSnapshotDocuments =
                           snapshot.data?.docs ?? [];
+
+                      List<DocumentSnapshot> documentList = List.of(newSnapshotDocuments.reversed);
+
+
 
                       return SizedBox(
                         height: (MediaQuery.of(context).viewInsets.bottom != 0)
@@ -95,10 +102,11 @@ class _ChatScreenState extends State<ChatScreen> {
                                 MediaQuery.of(context).viewInsets.bottom
                             : constraints.maxHeight - 150,
                         child: ListView.builder(
-                          itemCount: newSnapshotList.length,
+                          reverse: true,
+                          itemCount: documentList.length,
                           itemBuilder: (context, index) {
                             MessageModel newMessage = MessageModel.fromSnapshot(
-                                newSnapshotList[index]
+                                documentList[index]
                                     as DocumentSnapshot<Map<String, dynamic>>);
                             return MessageBox(
                               message: newMessage,
@@ -132,10 +140,6 @@ class _ChatScreenState extends State<ChatScreen> {
                           ),
                           TextButton(
                             onPressed: () async {
-                              setState(() {
-                                isPIon = true;
-                              });
-
                               var newMessage = MessageModel(
                                   senderEmail: _user!.email!,
                                   messageText: message,
@@ -154,7 +158,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                     MessageModel.toJson(newMessage),
                                   );
                               setState(() {
-                                isPIon = false;
                                 _messageController.text = '';
                               });
                             },
