@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.popestrings.chat_app_flutter">
-    <uses-sdk android:minSdkVersion="21"/>
    <application
         android:label="chat_app_flutter"
         android:name="${applicationName}"

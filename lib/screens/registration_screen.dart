@@ -1,9 +1,10 @@
 import 'package:chat_app_flutter/screens/groups_screen.dart';
 import 'package:chat_app_flutter/utils/custom_widgets.dart';
-import 'package:chat_app_flutter/screens/chat_screen.dart';
+import 'package:chat_app_flutter/utils/forms.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 
 class RegistrationScreen extends StatefulWidget {
   static const String id = '/registration';
@@ -34,6 +35,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   String email = '';
   String password = '';
   String confirmPassword = '';
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -46,9 +48,11 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-        builder: (context, constraints) => SafeArea(
-          child: Scaffold(
-            body: SingleChildScrollView(
+      builder: (context, constraints) => SafeArea(
+        child: Scaffold(
+          body: ModalProgressHUD(
+            inAsyncCall: isLoading,
+            child: SingleChildScrollView(
               child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -66,59 +70,22 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                     const SizedBox(
                       height: 42,
                     ),
-                    AuthTextField(
-                      onChanged: (value) {
-                        email = value;
+                    RegistrationForm(
+                      navigate: () {
+                        Navigator.of(context).pushNamed(GroupScreen.id);
                       },
-                      isEmail: true,
-                      hintTitle: 'Enter your Email',
-                    ),
-                    const SizedBox(
-                      height: 42,
-                    ),
-                    AuthTextField(
-                      onChanged: (value) {
-                        password = value;
+                      onError: (error) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(error),
+                          ),
+                        );
                       },
-                      isPassword: true,
-                      hintTitle: 'Enter your Password',
-                    ),
-                    const SizedBox(
-                      height: 42,
-                    ),
-                    AuthTextField(
-                      onChanged: (value) {
-                        confirmPassword = value;
+                      progressIndicator: (value){
+                        setState(() {
+                          isLoading = value;
+                        });
                       },
-                      isPassword: true,
-                      hintTitle: 'Confirm Password',
-                    ),
-                    const SizedBox(
-                      height: 42,
-                    ),
-                    RoundEdgeButton(
-                      () async {
-                        print("email: $email \n password: $password");
-
-                        if (password == confirmPassword) {
-                          final userCredentials =
-                              await _auth.createUserWithEmailAndPassword(
-                                  email: email, password: password);
-                          if (userCredentials != null) {
-                            loggedInUser = _auth.currentUser;
-                            Navigator.of(context).pushNamed(GroupScreen.id);
-                          }
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              backgroundColor: Colors.blue,
-                              content: Text('Check the passwords'),
-                            ),
-                          );
-                        }
-                      },
-                      child: const Text('Register'),
-                      color: Colors.blueAccent,
                     ),
                   ],
                 ),
@@ -126,6 +93,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             ),
           ),
         ),
-      );
+      ),
+    );
   }
 }

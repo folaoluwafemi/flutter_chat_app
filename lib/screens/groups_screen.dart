@@ -24,6 +24,15 @@ class _GroupScreenState extends State<GroupScreen> {
       builder: (context, constraints) => SafeArea(
         child: Scaffold(
           appBar: AppBar(
+            leading: IconButton(
+              onPressed: (){
+                FirebaseAuth.instance.signOut();
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(
+                Icons.arrow_back_ios,
+              ),
+            ),
             title: const Center(child: Text('\u{26A1}Groups')),
           ),
           body: Column(

@@ -50,19 +50,6 @@ class _ChatScreenState extends State<ChatScreen> {
             title: const Center(
               child: Text('\u{26A1}Chat'),
             ),
-            actions: [
-              IconButton(
-                onPressed: () async {
-                  setState(() {
-                    isPIon = true;
-                  });
-                  await _auth.signOut();
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pop();
-                },
-                icon: const Icon(Icons.clear),
-              ),
-            ],
           ),
           body: ModalProgressHUD(
             inAsyncCall: isPIon,
@@ -92,14 +79,15 @@ class _ChatScreenState extends State<ChatScreen> {
                         AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>>
                             snapshot) {
                       if (snapshot.hasError) {
-                        print('Error: Firestore stream snapshot has an error');
+                        return const Center(
+                            child: Text(
+                                'Error: Firestore stream snapshot has an error'));
                       }
                       if (!snapshot.hasData) {
                         return const CircularProgressIndicator();
                       }
                       List<DocumentSnapshot> newSnapshotList =
                           snapshot.data?.docs ?? [];
-                      print(newSnapshotList[0].data());
 
                       return SizedBox(
                         height: (MediaQuery.of(context).viewInsets.bottom != 0)
@@ -112,7 +100,6 @@ class _ChatScreenState extends State<ChatScreen> {
                             MessageModel newMessage = MessageModel.fromSnapshot(
                                 newSnapshotList[index]
                                     as DocumentSnapshot<Map<String, dynamic>>);
-                            print(newMessage.messageText);
                             return MessageBox(
                               message: newMessage,
                               isCurrentUser:
@@ -160,14 +147,12 @@ class _ChatScreenState extends State<ChatScreen> {
                               //     .update({
                               //   'groups.messages.${index + 1}': MessageModel.toJson(newMessage),
                               // })
-                              // .then((value) => print("user has been updated sucessfully \n\n\n\n sucessfully"))
+                              // .then((value) => print("user has been updated successfully \n\n\n\n successfully"))
                               // .catchError((error)=> print('user has NOT been updated due to: $error'));
 
                               await _firestore.collection(chatName).add(
                                     MessageModel.toJson(newMessage),
                                   );
-
-                              print(message);
                               setState(() {
                                 isPIon = false;
                                 _messageController.text = '';

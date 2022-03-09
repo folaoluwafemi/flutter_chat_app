@@ -35,42 +35,6 @@ class RoundEdgeButton extends StatelessWidget {
   }
 }
 
-class AuthTextField extends StatelessWidget {
-  final bool? isPassword;
-  final String? hintTitle;
-  final BoxConstraints? constraints;
-  final ValueChanged<String>? onChanged;
-  final ValueChanged<String>? onSubmitted;
-  final bool? isEmail;
-
-  const AuthTextField({
-    @required this.onChanged,
-    this.onSubmitted,
-    @required this.hintTitle,
-    this.constraints,
-    this.isPassword,
-    this.isEmail,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 10),
-      child: Center(
-        child: TextFormField(
-            keyboardType: (isEmail == null) ? null : TextInputType.emailAddress,
-            obscureText: isPassword ?? false,
-            textAlign: TextAlign.center,
-            onChanged: onChanged,
-            onFieldSubmitted: onSubmitted,
-            cursorHeight: 20,
-            decoration: authInputDecoration().copyWith(hintText: hintTitle)),
-      ),
-    );
-  }
-}
-
 class MessageField extends StatelessWidget {
   final ValueChanged? onTextChanged;
 
@@ -231,7 +195,7 @@ class AddGroupTextField extends StatelessWidget {
 class AddGroupBottomSheet extends StatefulWidget {
   final Function(String name) createGroupCallback;
 
-  const AddGroupBottomSheet({required this.createGroupCallback,  Key? key})
+  const AddGroupBottomSheet({required this.createGroupCallback, Key? key})
       : super(key: key);
 
   @override
